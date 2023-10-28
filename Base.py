@@ -4,16 +4,37 @@ import Globals
 
 class Base:
     def __init__(self):
-        # Define variables
+        # Import source
+        self.local_gallery = Importer.create_local_gallery()
+
+        # Default parameters
         self.return_results = 999
         self.image_width = 200
+
+        # Init lists
         self.all_categories = []
-        self.selected_categories = ["environmental"]
         self.active_keywords = []
-        self.selected_keywords = ["cool"]
+        self.selected_categories = []
+        self.selected_keywords = []
+
+        # Temporary Status Flags
         self.logged_in = True
         self.show_debug_form_checked = False
-        self.local_gallery = Importer.create_local_gallery()
+
+    @staticmethod
+    def get_all_keywords(gallery: list):
+        all_rows_of_keywords = []
+        for g in gallery:
+            all_rows_of_keywords.append(g['Keywords'])
+        all_keywords = [item for sublist in all_rows_of_keywords for item in sublist]
+        return all_keywords
+
+    @staticmethod
+    def get_all_categories(gallery: list):
+        all_rows_of_categories = []
+        for g in gallery:
+            all_rows_of_categories.append(g['Categories'])
+        return all_rows_of_categories
 
     @property
     def is_user_logged_in(self):
@@ -23,6 +44,7 @@ class Base:
             return True
 
     def detect_active_form(self):
+        self.load_welcome()
         if self.is_user_logged_in:
             if self.show_debug_form_checked:
                 self.load_debug_form()
@@ -35,28 +57,28 @@ class Base:
 
     @staticmethod
     def load_sign_in_page():
-        return print("sign-in page loaded")
+        return print("CURRENT PAGE: Sign-in")
 
     @staticmethod
     def load_welcome():
-        return print("welcome page loaded")
+        return print("CURRENT PAGE: Welcome")
 
     @staticmethod
     def load_debug_form():
-        return print("debug page loaded")
+        return print("CURRENT PAGE: Debug Form")
 
-    def load_main(self, selected_categories: list, selected_keywords: list):
-        if not selected_categories and not selected_keywords:
-            print("gallery_loaded")
-            # self.get_images_from_gallery(self.local_gallery, self.active_keywords, self.selected_categories)
-        else:
-            self.load_welcome()
+    @staticmethod
+    def load_main(selected_categories: list, selected_keywords: list):
+        if selected_categories or selected_keywords:
+            print("CURRENT PAGE: Main Gallery")
 
     # Display active form
 
     def initialize_and_display(self):
-        # self.activate_and_load_keyword_autcomplete(Globals.active_keywords)
-        return self.detect_active_form()
+        # self.activate_and_load_keyword_autocomplete(Globals.active_keywords)
+        self.detect_active_form()
+        print(f'ALL_KEYWORDS: {self.get_all_keywords(self.local_gallery)}')
+        print(f'ALL_CATEGORIES: {self.get_all_categories(self.local_gallery)}')
 
     """"""""""""""""""""""""""""""
     """ GALLERY VIEW """
