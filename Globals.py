@@ -1,4 +1,4 @@
-
+# Global variables
 
 local_gallery = []
 all_keywords = []

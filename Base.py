@@ -1,3 +1,4 @@
+import random
 import Importer
 import Globals
 
@@ -21,20 +22,47 @@ class Base:
         self.logged_in = True
         self.show_debug_form_checked = False
 
+    # Extract keywords from local gallery
+
     @staticmethod
-    def get_all_keywords(gallery: list):
+    def get_all_keywords(gallery: list) -> object:
         all_rows_of_keywords = []
         for g in gallery:
             all_rows_of_keywords.append(g['Keywords'])
-        all_keywords = [item for sublist in all_rows_of_keywords for item in sublist]
+        all_keywords = [item for sublist in all_rows_of_keywords for item in sublist]\
+                       + [""] + [""] + [""] + [""] + [""] + [""] + [""] + [""]
         return all_keywords
+
+    @staticmethod
+    def choose_random_groups_of_keywords(all_keywords: list):
+        random_keyword_list = []
+        num_keywords = random.randint(0, 5)
+        for i, e in enumerate(all_keywords):
+            random_keyword_selector_seed = random.randint(0, len(all_keywords) - 1)
+            if len(random_keyword_list) < num_keywords:
+                random_keyword_list.append(all_keywords[random_keyword_selector_seed])
+        return random_keyword_list
+
+    # Extract categories from local gallery
 
     @staticmethod
     def get_all_categories(gallery: list):
         all_rows_of_categories = []
         for g in gallery:
             all_rows_of_categories.append(g['Categories'])
-        return all_rows_of_categories
+        return list(set(all_rows_of_categories))
+
+    @staticmethod
+    def choose_random_groups_of_categories(all_categories: list):
+        random_category_list = []
+        num_categories = random.randint(0, 1)
+        for i, e in enumerate(all_categories):
+            random_category_selector_seed = random.randint(0, len(all_categories) - 1)
+            if len(random_category_list) < num_categories:
+                random_category_list.append(all_categories[random_category_selector_seed])
+        return random_category_list
+
+    # Check login status
 
     @property
     def is_user_logged_in(self):
@@ -42,6 +70,8 @@ class Base:
             return False
         else:
             return True
+
+    # Determine active form
 
     def detect_active_form(self):
         self.load_welcome()
@@ -57,28 +87,45 @@ class Base:
 
     @staticmethod
     def load_sign_in_page():
-        return print("CURRENT PAGE: Sign-in")
+        print("---------------------")
+        print("CURRENT PAGE: Sign-in")
+        print("---------------------")
 
     @staticmethod
     def load_welcome():
-        return print("CURRENT PAGE: Welcome")
+        print("---------------------")
+        print("CURRENT PAGE: Welcome")
+        print("---------------------")
 
     @staticmethod
     def load_debug_form():
-        return print("CURRENT PAGE: Debug Form")
+        print("------------------------")
+        print("CURRENT PAGE: Debug Form")
+        print("------------------------")
 
     @staticmethod
     def load_main(selected_categories: list, selected_keywords: list):
         if selected_categories or selected_keywords:
+            print("--------------------------")
             print("CURRENT PAGE: Main Gallery")
+            print("--------------------------")
 
-    # Display active form
+    def create_report(self):
+        print(f'ALL_KEYWORDS: {self.get_all_keywords(self.local_gallery)}')
+        print("---------------------")
+        # print(f'RANDOM_KEYWORD: {self.choose_random_selected_keywords(self.get_all_keywords(self.local_gallery))}')
+        print(f'RANDOM_KEYWORD LIST: {self.choose_random_groups_of_keywords(self.get_all_keywords(self.local_gallery))}')
+        print("---------------------")
+        print(f'ALL_CATEGORIES: {self.get_all_categories(self.local_gallery)}')
+        print("---------------------")
+        # print(f'RANDOM_CATEGORY: {self.choose_random_selected_categories(self.get_all_categories(self.local_gallery))}')
+        print(f'RANDOM_CATEGORY LIST: {self.choose_random_groups_of_categories(self.get_all_categories(self.local_gallery))}')
+        print("---------------------")
 
     def initialize_and_display(self):
         # self.activate_and_load_keyword_autocomplete(Globals.active_keywords)
         self.detect_active_form()
-        print(f'ALL_KEYWORDS: {self.get_all_keywords(self.local_gallery)}')
-        print(f'ALL_CATEGORIES: {self.get_all_categories(self.local_gallery)}')
+        self.create_report()
 
     """"""""""""""""""""""""""""""
     """ GALLERY VIEW """
@@ -228,6 +275,8 @@ class Base:
     #     else:
     #         panel.visible = False
 
+
+# Create instance of Base class
 
 base_form = Base()
 base_form.initialize_and_display()
