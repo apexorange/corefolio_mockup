@@ -41,12 +41,12 @@ class Base:
             random_keyword_selector_seed = random.randint(0, len(all_keywords) - 1)
             if len(random_keyword_list) < num_keywords:
                 random_keyword_list.append(all_keywords[random_keyword_selector_seed])
-        return random_keyword_list
+        return list(set(random_keyword_list))
 
     # Extract categories from local gallery
 
     @staticmethod
-    def get_all_categories(gallery: list):
+    def get_all_categories(gallery: list) -> list:
         all_rows_of_categories = []
         for g in gallery:
             all_rows_of_categories.append(g['Categories'])
@@ -150,8 +150,22 @@ base.initialize_and_display()
 
 live_gallery = base.local_gallery
 
-for g in live_gallery:
-    print(str(GalleryItem(g['Index'], g['Slide_Title'], g['Categories'], g['Keywords'])))
+# for g in live_gallery:
+#     print(str(GalleryItem(g['Index'], g['Slide_Title'], g['Categories'], g['Keywords'])))
 
-random_keys = base.choose_random_groups_of_keywords(base.get_all_keywords(base.local_gallery))
+random_keys = base.choose_random_groups_of_keywords(base.get_all_keywords(live_gallery))
+random_cats = base.choose_random_groups_of_categories(base.get_all_categories(live_gallery))
+
+print('-------------------------')
 print(random_keys)
+print(random_cats)
+
+live_filter_lst: list = list(set(random_cats + random_keys))
+
+print(f'Active filters: {live_filter_lst}\n')
+
+for g in live_gallery:
+    for live_filter in live_filter_lst:
+        if live_filter in g['Keywords']:
+            print(g['Index'])
+            print(str(GalleryItem(g['Index'], g['Slide_Title'], g['Categories'], g['Keywords'])))
