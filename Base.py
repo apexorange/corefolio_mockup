@@ -137,8 +137,8 @@ class GalleryItem:
         self.keywords = keywords
         self.categories = [categories]
 
-    def __str__(self):
-        return f'{self.slide_idx}\n{self.title}\n{self.categories}\n{self.keywords}\n_______________________________\n'
+    def __repr__(self):
+        return f'{int(self.slide_idx)}\n{self.title}\n{self.categories}\n{self.keywords}'
 
 
 # Create instance of Base class
@@ -156,7 +156,7 @@ live_gallery = base.local_gallery
 random_keys = base.choose_random_groups_of_keywords(base.get_all_keywords(live_gallery))
 random_cats = base.choose_random_groups_of_categories(base.get_all_categories(live_gallery))
 
-print('-------------------------')
+print('-----------------')
 print(random_keys)
 print(random_cats)
 
@@ -164,8 +164,10 @@ live_filter_lst: list = list(set(random_cats + random_keys))
 
 print(f'Active filters: {live_filter_lst}\n')
 
-for g in live_gallery:
+item_list = []
+item_dict = {}
+for i, g in enumerate(live_gallery):
     for live_filter in live_filter_lst:
-        if live_filter in g['Keywords']:
-            print(g['Index'])
-            print(str(GalleryItem(g['Index'], g['Slide_Title'], g['Categories'], g['Keywords'])))
+        if live_filter in g['Keywords'] and GalleryItem(g['Index'],g['Slide_Title'],g['Categories'],g['Keywords']) not in item_dict:
+            item_dict.update({i: GalleryItem(g['Index'],g['Slide_Title'], g['Categories'],g['Keywords'])})
+print(item_dict)
