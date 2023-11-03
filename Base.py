@@ -29,7 +29,7 @@ class Base:
         all_rows_of_keywords = []
         for g in gallery:
             all_rows_of_keywords.append(g['Keywords'])
-        all_keywords = [item for sublist in all_rows_of_keywords for item in sublist]\
+        all_keywords = [item for sublist in all_rows_of_keywords for item in sublist] \
                        + [""] + [""] + [""] + [""] + [""] + [""] + [""] + [""]
         return all_keywords
 
@@ -114,12 +114,14 @@ class Base:
         print(f'ALL_KEYWORDS: {self.get_all_keywords(self.local_gallery)}')
         print("---------------------")
         # print(f'RANDOM_KEYWORD: {self.choose_random_selected_keywords(self.get_all_keywords(self.local_gallery))}')
-        print(f'RANDOM_KEYWORD LIST: {self.choose_random_groups_of_keywords(self.get_all_keywords(self.local_gallery))}')
+        print(
+            f'RANDOM_KEYWORD LIST: {self.choose_random_groups_of_keywords(self.get_all_keywords(self.local_gallery))}')
         print("---------------------")
         print(f'ALL_CATEGORIES: {self.get_all_categories(self.local_gallery)}')
         print("---------------------")
         # print(f'RANDOM_CATEGORY: {self.choose_random_selected_categories(self.get_all_categories(self.local_gallery))}')
-        print(f'RANDOM_CATEGORY LIST: {self.choose_random_groups_of_categories(self.get_all_categories(self.local_gallery))}')
+        print(
+            f'RANDOM_CATEGORY LIST: {self.choose_random_groups_of_categories(self.get_all_categories(self.local_gallery))}')
         print("---------------------")
 
     def initialize_and_display(self):
@@ -164,10 +166,16 @@ live_filter_lst: list = list(set(random_cats + random_keys))
 
 print(f'Active filters: {live_filter_lst}\n')
 
-item_list = []
-item_dict = {}
-for i, g in enumerate(live_gallery):
-    for live_filter in live_filter_lst:
-        if live_filter in g['Keywords'] and GalleryItem(g['Index'],g['Slide_Title'],g['Categories'],g['Keywords']) not in item_dict:
-            item_dict.update({i: GalleryItem(g['Index'],g['Slide_Title'], g['Categories'],g['Keywords'])})
-print(item_dict)
+
+def gallery_item_assembler():
+    item_dict = {}
+    for i, g in enumerate(live_gallery):
+        gallery_item = GalleryItem(g['Index'], g['Slide_Title'], g['Categories'], g['Keywords'])
+        for live_filter in live_filter_lst:
+            if live_filter in g['Keywords'] and gallery_item not in item_dict:
+                item_dict.update({i: gallery_item})
+    return item_dict
+
+
+result = gallery_item_assembler()
+print(result)
