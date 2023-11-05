@@ -21,27 +21,8 @@ class Base:
         # Temporary Status Flags
         self.logged_in = True
         self.show_debug_form_checked = False
-
-    # Extract keywords from local gallery
-
-    @staticmethod
-    def get_all_keywords(gallery: list) -> list:
-        all_rows_of_keywords = []
-        for g in gallery:
-            all_rows_of_keywords.append(g['Keywords'])
-        all_keywords = [item for sublist in all_rows_of_keywords for item in sublist] \
-                       + [""] + [""] + [""] + [""] + [""] + [""] + [""] + [""]
-        return all_keywords
-
-    @staticmethod
-    def choose_random_groups_of_keywords(all_keywords: list):
-        random_keyword_list = []
-        num_keywords = random.randint(0, 5)
-        random_keyword_selector_seed = random.randint(0, len(all_keywords) - 1)
-        if len(random_keyword_list) < num_keywords:
-            random_keyword_list.append(all_keywords[random_keyword_selector_seed])
-        return list(set(random_keyword_list))
-
+        
+       
     # Extract categories from local gallery
 
     @staticmethod
@@ -59,6 +40,35 @@ class Base:
         if len(random_category_list) < num_categories:
             random_category_list.append(all_categories[random_category_selector_seed])
         return random_category_list
+
+    # Extract keywords from local gallery
+    
+    @staticmethod
+    def reduce_available_keywords_with_categories_filter(gallery: list, selected_categories: list):
+    		active_keywords = []
+    		for g in gallery:
+    			for cat in selected_categories:
+    				if cat in g['Categories']:
+    					active_keywords.append(g['Keywords'])
+    		return active_keywords
+
+    @staticmethod
+    def get_all_keywords(gallery: list):
+        all_rows_of_keywords = []
+        for g in gallery:
+            all_rows_of_keywords.append(g['Keywords'])
+        all_keywords = [item for sublist in all_rows_of_keywords for item in sublist] \
+                       + [""] + [""] + [""] + [""] + [""] + [""] + [""] + [""]
+        return all_keywords
+
+    @staticmethod
+    def choose_random_groups_of_keywords_from_category_filtered_gallery(keywords: list):
+        random_keyword_list = []
+        num_keywords = random.randint(0, 5)
+        random_keyword_selector_seed = random.randint(0, len(all_keywords) - 1)
+        if len(random_keyword_list) < num_keywords:
+            random_keyword_list.append(all_keywords[random_keyword_selector_seed])
+        return list(set(random_keyword_list))
 
     # Check login status
 
@@ -81,7 +91,7 @@ class Base:
         else:
             self.load_sign_in_page()
 
-    # Startup Form Options
+		# Startup Form Options
 
     @staticmethod
     def load_sign_in_page():
@@ -109,24 +119,24 @@ class Base:
             print("CURRENT PAGE: Main Gallery")
             print("--------------------------")
 
-    def create_report(self):
-        print(f'ALL_KEYWORDS: {self.get_all_keywords(self.local_gallery)}')
-        print("---------------------")
-        # print(f'RANDOM_KEYWORD: {self.choose_random_selected_keywords(self.get_all_keywords(self.local_gallery))}')
-        print(
-            f'RANDOM_KEYWORD LIST: {self.choose_random_groups_of_keywords(self.get_all_keywords(self.local_gallery))}')
-        print("---------------------")
-        print(f'ALL_CATEGORIES: {self.get_all_categories(self.local_gallery)}')
-        print("---------------------")
-        # print(f'RANDOM_CATEGORY: {self.choose_random_selected_categories(self.get_all_categories(self.local_gallery))}')
-        print(
-            f'RANDOM_CATEGORY LIST: {self.choose_random_groups_of_categories(self.get_all_categories(self.local_gallery))}')
-        print("---------------------")
+#     def create_report(self):
+#         print(f'ALL_KEYWORDS: {self.get_all_keywords(self.local_gallery)}')
+#         print("---------------------")
+#         # print(f'RANDOM_KEYWORD: {self.choose_random_selected_keywords(self.get_all_keywords(self.local_gallery))}')
+#         print(
+#             f'RANDOM_KEYWORD LIST: {self.choose_random_groups_of_keywords(self.get_all_keywords(self.local_gallery))}')
+#         print("---------------------")
+#         print(f'ALL_CATEGORIES: {self.get_all_categories(self.local_gallery)}')
+#         print("---------------------")
+#         # print(f'RANDOM_CATEGORY: {self.choose_random_selected_categories(self.get_all_categories(self.local_gallery))}')
+#         print(
+#             f'RANDOM_CATEGORY LIST: {self.choose_random_groups_of_categories(self.get_all_categories(self.local_gallery))}')
+#         print("---------------------")
 
-    def initialize_and_display(self):
-        # self.activate_and_load_keyword_autocomplete(Globals.active_keywords)
-        self.detect_active_form()
-        self.create_report()
+#     def initialize_and_display(self):
+#         # self.activate_and_load_keyword_autocomplete(Globals.active_keywords)
+#         self.detect_active_form()
+#         self.create_report()
 
 
 # Create gallery item
@@ -144,25 +154,22 @@ class GalleryItem():
 # Create instance of Base class
 
 base = Base()
-base.initialize_and_display()
+# base.initialize_and_display()
 
 # Create instance of gallery for Base Class
 
 live_gallery = base.local_gallery
 
-# for g in live_gallery:
-#     print(str(GalleryItem(g['Index'], g['Slide_Title'], g['Categories'], g['Keywords'])))
-
-random_keys = base.choose_random_groups_of_keywords(base.get_all_keywords(live_gallery))
 random_cats = base.choose_random_groups_of_categories(base.get_all_categories(live_gallery))
-
+active_keywords = base.reduce_available_keywords_with_categories_filter(live_gallery, random_cats)
+random_active_keywords = base.choose_random_groups_of_keywords_from_category_filtered_gallery()
 print('-----------------')
-print(random_keys)
+# print(random_keys)
 print(random_cats)
 
-live_filter_lst: list = list(set(random_cats + random_keys))
+# live_filter_lst: list = list(set(random_cats + random_keys))
 
-print(f'Active filters: {live_filter_lst}\n')
+# print(f'Active filters: {live_filter_lst}\n')
 
 
 def flatten_inner_lists(list_to_clean) -> list:
