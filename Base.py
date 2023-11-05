@@ -94,6 +94,7 @@ class Base:
         print("---------------------")
         print("CURRENT PAGE: Welcome")
         print("---------------------")
+        print("---------------------")
 
     @staticmethod
     def load_debug_form():
