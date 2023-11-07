@@ -38,19 +38,20 @@ class Base:
         num_categories = random.randint(0, 3)
         random_category_selector_seed = random.randint(0, len(all_categories) - 1)
         if len(random_category_list) < num_categories:
-            random_category_list.append(all_categories[random_category_selector_seed])
+            for r in all_categories:
+                random_category_list.append(all_categories[random_category_selector_seed])
         return random_category_list
 
     # Extract keywords from local gallery
     
     @staticmethod
     def reduce_available_keywords_with_categories_filter(gallery: list, selected_categories: list):
-    		active_keywords = []
-    		for g in gallery:
-    			for cat in selected_categories:
-    				if cat in g['Categories']:
-    					active_keywords.append(g['Keywords'])
-    		return active_keywords
+            active_keywords = []
+            for g in gallery:
+                for cat in selected_categories:
+                    if cat in g['Categories']:
+                        active_keywords.append(g['Keywords'])
+            return active_keywords[0]
 
     @staticmethod
     def get_all_keywords(gallery: list):
@@ -62,17 +63,15 @@ class Base:
         return all_keywords
 
     @staticmethod
-    def choose_random_groups_of_keywords_from_category_filtered_gallery(keywords: list):
+    def choose_random_keywords_from_filtered_gallery(active_keys: list):
+        print(f'Active Keys: {active_keys}')
         random_keyword_list = []
-        num_keywords = random.randint(0, 5)
-        random_keyword_selector_seed = random.randint(0, len(all_keywords) - 1)
-        if len(random_keyword_list) < num_keywords:
-            random_keyword_list.append(all_keywords[random_keyword_selector_seed])
-        return list(set(random_keyword_list))
+        num_keywords = random.randint(0, len(active_keys))
+        random_keyword_selector_seed = random.randint(0, num_keywords-1)
+        random_keyword_list.append(active_keys[random_keyword_selector_seed])
+        return random_keyword_list
 
-    # Check login status
-
-    @property
+    @property  # Check login status
     def is_user_logged_in(self):
         if not self.logged_in:
             return False
@@ -91,7 +90,7 @@ class Base:
         else:
             self.load_sign_in_page()
 
-		# Startup Form Options
+        # Startup Form Options
 
     @staticmethod
     def load_sign_in_page():
@@ -162,10 +161,12 @@ live_gallery = base.local_gallery
 
 random_cats = base.choose_random_groups_of_categories(base.get_all_categories(live_gallery))
 active_keywords = base.reduce_available_keywords_with_categories_filter(live_gallery, random_cats)
-random_active_keywords = base.choose_random_groups_of_keywords_from_category_filtered_gallery()
+random_active_keywords = base.choose_random_keywords_from_filtered_gallery(active_keywords)
 print('-----------------')
 # print(random_keys)
-print(random_cats)
+print(f'Random Cats: {random_cats}')
+# print(active_keywords)
+print(f'Random Active Keys: {random_active_keywords}')
 
 # live_filter_lst: list = list(set(random_cats + random_keys))
 
@@ -199,4 +200,4 @@ def gallery_item_assembler():
 
 output = flatten_inner_lists(check_category_keyword_overlap())
 
-print(output)
+# print(output)
